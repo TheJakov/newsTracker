@@ -427,7 +427,7 @@ class NewsFilterAgent(Agent):
 
             print("\nNews Filter agent: Svi scraperi su mi javili da su prikupili i poslali podatke.") 
             #ovdje filtriram i saljem glavnom agentu rezultate za display
-            kljucnaRijec = input("Unesite ključnu riječ prema kojoj želite filtrirati novosti: ")
+            kljucnaRijec = input(" ----> Unesite ključnu riječ prema kojoj želite filtrirati novosti  ('sve vijesti' za prikaz svih): ")
             print("News Filter agent: Započinjem pregled i filtiranje prikupljenih novosti.")
             kljucnaRijec = kljucnaRijec.strip()
 
