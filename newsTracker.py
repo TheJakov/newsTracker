@@ -30,7 +30,7 @@ class GlavniAgent(Agent):
         async def on_end(self):
             print("\nGlavni agent: Završavam sa radom.")
             print("\n ------------------------------- \n")
-            print("Izvorni kod dostupan i na GitHub-u: ")
+            #print("Izvorni kod dostupan i na GitHub-u: https://github.com/TheJakov/newsTracker")
             await self.agent.stop()
             time.sleep(300)
             sys.exit(0)
@@ -40,7 +40,7 @@ class GlavniAgent(Agent):
         async def run(self):
             
             print(f"Glavni agent: Saljem dostupnim scraper agentima zahtjev za prikupljanje vijesti.\n")
-            primatelji = ["username5@jix.im", "username4@jix.im", "username3@jix.im", "username2@jix.im", "username@jix.im"]
+            primatelji = ["username@jix.im", "username2@jix.im", "username3@jix.im", "username4@jix.im", "username5@jix.im"]
             for primatelj in primatelji:
                 msg = spade.message.Message(
                     to=primatelj,
@@ -56,65 +56,69 @@ class GlavniAgent(Agent):
             if msg:
                 if msg.body != '':
                     print("\nGlavni agent: Primio sam poruku da su novosti spremne za prikazivanje. Slijedi prikaz novosti.\n\n")
-
-                    print("Prikaz povezanih vijesti sa stranice 24Sata :\n")
-                    if(len(GlavniAgent.listaRezultata24Sata) == 0):
-                        print("\tNema vijesti povezanih sa tom ključnom riječi.")
-                    else:
-                        brojac = 0
-                        for vijest in GlavniAgent.listaRezultata24Sata:
-                            brojac += 1
-                            print(f"\t{brojac}) {vijest}")
-                    
-                    print("\nPrikaz povezanih vijesti sa stranice Večernji.hr :\n")
-                    if(len(GlavniAgent.listaRezultataVecernji) == 0):
-                        print("\tNema vijesti povezanih sa tom ključnom riječi.")
-                    else:
-                        brojac = 0
-                        for vijest in GlavniAgent.listaRezultataVecernji:
-                            brojac += 1
-                            print(f"\t{brojac}) {vijest}")
-                    
-                    print("\nPrikaz povezanih vijesti sa stranice Jutarnji List :\n")
-                    if(len(GlavniAgent.listaRezultataJutarnji) == 0):
-                        print("\tNema vijesti povezanih sa tom ključnom riječi.")
-                    else:
-                        brojac = 0
-                        for vijest in GlavniAgent.listaRezultataJutarnji:
-                            brojac += 1
-                            print(f"\t{brojac}) {vijest}")
-                    
-                    print("\nPrikaz povezanih vijesti sa stranice Slobodna Dalmacija :\n")
-                    if(len(GlavniAgent.listaRezultataSlobodnaDalmacija) == 0):
-                        print("\tNema vijesti povezanih sa tom ključnom riječi.")
-                    else:
-                        brojac = 0
-                        for vijest in GlavniAgent.listaRezultataSlobodnaDalmacija:
-                            brojac += 1
-                            print(f"\t{brojac}) {vijest}")
-
-                    print("\nPrikaz povezanih vijesti sa stranice Dnevnik.Hr :\n")
-                    if(len(GlavniAgent.listaRezultataDnevnikHr) == 0):
-                        print("\tNema vijesti povezanih sa tom ključnom riječi.")
-                    else:
-                        brojac = 0
-                        for vijest in GlavniAgent.listaRezultataDnevnikHr:
-                            brojac += 1
-                            print(f"\t{brojac}) {vijest}")
+                    self.set_next_state("Stanje3")
             else:
                 print("\tGlavni agent: Čekao sam, ali nema odgovora.")
-            time.sleep(1)
+    
+    class Stanje3(State):
+        async def run(self):
 
-  
+            print("Prikaz povezanih vijesti sa stranice 24Sata :\n")
+            if(len(GlavniAgent.listaRezultata24Sata) == 0):
+                print("\tNema vijesti povezanih sa tom ključnom riječi.")
+            else:
+                brojac = 0
+                for vijest in GlavniAgent.listaRezultata24Sata:
+                    brojac += 1
+                    print(f"\t{brojac}) {vijest}")
+            
+            print("\nPrikaz povezanih vijesti sa stranice Večernji.hr :\n")
+            if(len(GlavniAgent.listaRezultataVecernji) == 0):
+                print("\tNema vijesti povezanih sa tom ključnom riječi.")
+            else:
+                brojac = 0
+                for vijest in GlavniAgent.listaRezultataVecernji:
+                    brojac += 1
+                    print(f"\t{brojac}) {vijest}")
+            
+            print("\nPrikaz povezanih vijesti sa stranice Jutarnji List :\n")
+            if(len(GlavniAgent.listaRezultataJutarnji) == 0):
+                print("\tNema vijesti povezanih sa tom ključnom riječi.")
+            else:
+                brojac = 0
+                for vijest in GlavniAgent.listaRezultataJutarnji:
+                    brojac += 1
+                    print(f"\t{brojac}) {vijest}")
+            
+            print("\nPrikaz povezanih vijesti sa stranice Slobodna Dalmacija :\n")
+            if(len(GlavniAgent.listaRezultataSlobodnaDalmacija) == 0):
+                print("\tNema vijesti povezanih sa tom ključnom riječi.")
+            else:
+                brojac = 0
+                for vijest in GlavniAgent.listaRezultataSlobodnaDalmacija:
+                    brojac += 1
+                    print(f"\t{brojac}) {vijest}")
+
+            print("\nPrikaz povezanih vijesti sa stranice Dnevnik.Hr :\n")
+            if(len(GlavniAgent.listaRezultataDnevnikHr) == 0):
+                print("\tNema vijesti povezanih sa tom ključnom riječi.")
+            else:
+                brojac = 0
+                for vijest in GlavniAgent.listaRezultataDnevnikHr:
+                    brojac += 1
+                    print(f"\t{brojac}) {vijest}")
+            #ovo je trenutak kada ja završavam sa svojim radom 
+
     async def setup(self):
 
         glavniAg = self.MojePonasanje()
 
         glavniAg.add_state(name="Stanje1", state=self.Stanje1(), initial=True)
         glavniAg.add_state(name="Stanje2", state=self.Stanje2())
+        glavniAg.add_state(name="Stanje3", state=self.Stanje3())
 
         glavniAg.add_transition(source="Stanje1", dest="Stanje2")
-        glavniAg.add_transition(source="Stanje2", dest="Stanje1")
+        glavniAg.add_transition(source="Stanje2", dest="Stanje3")
         
         self.add_behaviour(glavniAg)
 #kraj glavnog agenta
@@ -142,14 +146,7 @@ class Scraper24SataAgent(Agent):
             for story in stories:
                 tekst = story.find("span")
                 NewsFilterAgent.listaNovosti24Sata.append(tekst.text)
-
-            #saljem poruku filter agentu da sam gotov sa pribavljanjem svojih podataka
-            msg = spade.message.Message(
-                to= "username_filter@jix.im",
-                body= "Gotov sam."
-            )
-            await self.send(msg)
-            #ovo je trenutak kada ja završavam sa svojim radom    
+            self.set_next_state("Stanje3")   
             
     class Stanje2(State):
         async def run(self):
@@ -160,9 +157,18 @@ class Scraper24SataAgent(Agent):
                     print(f"Scraper 24sata: Primio sam poruku Glavnog agenta. Krecem s radom.")
             else:
                 print("\tScraper 24Sata: Čekao sam, ali nema odgovora.")
-            time.sleep(1)
             self.set_next_state("Stanje1")
+    
+    class Stanje3(State):
+        async def run(self):
 
+            #saljem poruku filter agentu da sam gotov sa pribavljanjem svojih podataka
+            msg = spade.message.Message(
+                to= "username_filter@jix.im",
+                body= "Gotov sam."
+            )
+            await self.send(msg)
+            #ovo je trenutak kada ja završavam sa svojim radom 
   
     async def setup(self):
 
@@ -170,9 +176,10 @@ class Scraper24SataAgent(Agent):
 
         scraperAg.add_state(name="Stanje1", state=self.Stanje1())
         scraperAg.add_state(name="Stanje2", state=self.Stanje2(), initial=True)
+        scraperAg.add_state(name="Stanje3", state=self.Stanje3())
 
-        scraperAg.add_transition(source="Stanje1", dest="Stanje2")
         scraperAg.add_transition(source="Stanje2", dest="Stanje1")
+        scraperAg.add_transition(source="Stanje1", dest="Stanje3")
         
         self.add_behaviour(scraperAg)
 #kraj 24 sata scraper agenta
@@ -199,15 +206,8 @@ class ScraperVecernjiAgent(Agent):
 
             for story in stories:
                 NewsFilterAgent.listaNovostiVecernji.append(story.text)
+            self.set_next_state("Stanje3")
 
-            #saljem poruku filter agentu da sam gotov sa pribavljanjem svojih podataka
-            msg = spade.message.Message(
-                to= "username_filter@jix.im",
-                body= "Gotov sam."
-            )
-            await self.send(msg)
-            #ovo je trenutak kada ja završavam sa svojim radom    
-            
     class Stanje2(State):
         async def run(self):
 
@@ -217,19 +217,29 @@ class ScraperVecernjiAgent(Agent):
                     print(f"Scraper Vecernji: Primio sam poruku Glavnog agenta. Krecem s radom.")
             else:
                 print("\tScraper Vecernji: Čekao sam, ali nema odgovora.")
-            time.sleep(1)
             self.set_next_state("Stanje1")
 
-  
+    class Stanje3(State):
+        async def run(self):
+
+            #saljem poruku filter agentu da sam gotov sa pribavljanjem svojih podataka
+            msg = spade.message.Message(
+                to= "username_filter@jix.im",
+                body= "Gotov sam."
+            )
+            await self.send(msg)
+            #ovo je trenutak kada ja završavam sa svojim radom    
+            
     async def setup(self):
 
         scraperAg = self.MojePonasanje()
 
         scraperAg.add_state(name="Stanje1", state=self.Stanje1())
         scraperAg.add_state(name="Stanje2", state=self.Stanje2(), initial=True)
+        scraperAg.add_state(name="Stanje3", state=self.Stanje3())
 
-        scraperAg.add_transition(source="Stanje1", dest="Stanje2")
         scraperAg.add_transition(source="Stanje2", dest="Stanje1")
+        scraperAg.add_transition(source="Stanje1", dest="Stanje3")
         
         self.add_behaviour(scraperAg)
 #kraj Vecernji scraper agenta
@@ -256,14 +266,7 @@ class ScraperJutarnjiAgent(Agent):
 
             for story in stories:
                 NewsFilterAgent.listaNovostiJutarnji.append(story.text.strip())
-
-            #saljem poruku filter agentu da sam gotov sa pribavljanjem svojih podataka
-            msg = spade.message.Message(
-                to= "username_filter@jix.im",
-                body= "Gotov sam."
-            )
-            await self.send(msg)
-            #ovo je trenutak kada ja završavam sa svojim radom    
+            self.set_next_state("Stanje3")    
             
     class Stanje2(State):
         async def run(self):
@@ -274,9 +277,18 @@ class ScraperJutarnjiAgent(Agent):
                     print(f"Scraper Jutarnji: Primio sam poruku Glavnog agenta. Krecem s radom.")
             else:
                 print("\tScraper Jutarnji: Čekao sam, ali nema odgovora.")
-            time.sleep(1)
             self.set_next_state("Stanje1")
-
+    
+    class Stanje3(State):
+        async def run(self):
+            
+            #saljem poruku filter agentu da sam gotov sa pribavljanjem svojih podataka
+            msg = spade.message.Message(
+                to= "username_filter@jix.im",
+                body= "Gotov sam."
+            )
+            await self.send(msg)
+            #ovo je trenutak kada ja završavam sa svojim radom
   
     async def setup(self):
 
@@ -284,9 +296,10 @@ class ScraperJutarnjiAgent(Agent):
 
         scraperAg.add_state(name="Stanje1", state=self.Stanje1())
         scraperAg.add_state(name="Stanje2", state=self.Stanje2(), initial=True)
+        scraperAg.add_state(name="Stanje3", state=self.Stanje3())
 
-        scraperAg.add_transition(source="Stanje1", dest="Stanje2")
         scraperAg.add_transition(source="Stanje2", dest="Stanje1")
+        scraperAg.add_transition(source="Stanje1", dest="Stanje3")
         
         self.add_behaviour(scraperAg)
 #kraj Jutarnji scraper agenta
@@ -313,14 +326,7 @@ class ScraperSlobodnaDalmacijaAgent(Agent):
 
             for story in stories:
                 NewsFilterAgent.listaNovostiSlobodnaDalmacija.append(story.text.strip())
-
-            #saljem poruku filter agentu da sam gotov sa pribavljanjem svojih podataka
-            msg = spade.message.Message(
-                to= "username_filter@jix.im",
-                body= "Gotov sam."
-            )
-            await self.send(msg)
-            #ovo je trenutak kada ja završavam sa svojim radom    
+            self.set_next_state("Stanje3")
             
     class Stanje2(State):
         async def run(self):
@@ -331,19 +337,29 @@ class ScraperSlobodnaDalmacijaAgent(Agent):
                     print(f"Scraper SlobodnaDalmacija: Primio sam poruku Glavnog agenta. Krecem s radom.")
             else:
                 print("\tScraper SlobodnaDalmacija: Čekao sam, ali nema odgovora.")
-            time.sleep(1)
             self.set_next_state("Stanje1")
+    
+    class Stanje3(State):
+        async def run(self):
 
-  
+            #saljem poruku filter agentu da sam gotov sa pribavljanjem svojih podataka
+            msg = spade.message.Message(
+                to= "username_filter@jix.im",
+                body= "Gotov sam."
+            )
+            await self.send(msg)
+            #ovo je trenutak kada ja završavam sa svojim radom
+
     async def setup(self):
 
         scraperAg = self.MojePonasanje()
 
         scraperAg.add_state(name="Stanje1", state=self.Stanje1())
         scraperAg.add_state(name="Stanje2", state=self.Stanje2(), initial=True)
+        scraperAg.add_state(name="Stanje3", state=self.Stanje3())
 
-        scraperAg.add_transition(source="Stanje1", dest="Stanje2")
         scraperAg.add_transition(source="Stanje2", dest="Stanje1")
+        scraperAg.add_transition(source="Stanje1", dest="Stanje3")
         
         self.add_behaviour(scraperAg)
 #kraj SlobodnaDalmacija scraper agenta
@@ -370,14 +386,7 @@ class ScraperDnevnikHrAgent(Agent):
 
             for story in stories:
                 NewsFilterAgent.listaNovostiDnevnikHr.append(story.text.strip())
-
-            #saljem poruku filter agentu da sam gotov sa pribavljanjem svojih podataka
-            msg = spade.message.Message(
-                to= "username_filter@jix.im",
-                body= "Gotov sam."
-            )
-            await self.send(msg)
-            #ovo je trenutak kada ja završavam sa svojim radom
+            self.set_next_state("Stanje3")
             
     class Stanje2(State):
         async def run(self):
@@ -388,8 +397,18 @@ class ScraperDnevnikHrAgent(Agent):
                     print(f"Scraper DnevnikHr: Primio sam poruku Glavnog agenta. Krecem s radom.")
             else:
                 print("\tScraper DnevnikHr: Čekao sam, ali nema odgovora.")
-            time.sleep(1)
             self.set_next_state("Stanje1")
+
+    class Stanje3(State):
+        async def run(self):
+
+            #saljem poruku filter agentu da sam gotov sa pribavljanjem svojih podataka
+            msg = spade.message.Message(
+                to= "username_filter@jix.im",
+                body= "Gotov sam."
+            )
+            await self.send(msg)
+            #ovo je trenutak kada ja završavam sa svojim radom
 
   
     async def setup(self):
@@ -398,9 +417,10 @@ class ScraperDnevnikHrAgent(Agent):
 
         scraperAg.add_state(name="Stanje1", state=self.Stanje1())
         scraperAg.add_state(name="Stanje2", state=self.Stanje2(), initial=True)
+        scraperAg.add_state(name="Stanje3", state=self.Stanje3())
 
-        scraperAg.add_transition(source="Stanje1", dest="Stanje2")
         scraperAg.add_transition(source="Stanje2", dest="Stanje1")
+        scraperAg.add_transition(source="Stanje1", dest="Stanje3")
         
         self.add_behaviour(scraperAg)
 #kraj DnevnikHr scraper agenta
@@ -466,14 +486,7 @@ class NewsFilterAgent(Agent):
                 for zapis in NewsFilterAgent.listaNovostiDnevnikHr:
                     if(kljucnaRijec in zapis):
                         GlavniAgent.listaRezultataDnevnikHr.append(zapis)
-
-            #saljem poruku glavnom agentu da sam gotov sa filtriranjem pribavljenih podataka
-            msg = spade.message.Message(
-                to= "username_main@jix.im",
-                body= "Gotov sam sa pribavljanjem podataka."
-            )
-            await self.send(msg)
-            #ovo je trenutak kada ja završavam sa svojim radom    
+            self.set_next_state("Stanje3")   
             
     class Stanje2(State):
         async def run(self):
@@ -488,17 +501,29 @@ class NewsFilterAgent(Agent):
                         self.set_next_state("Stanje2")
             else:
                 print("\tNewsFilter agent: Čekao sam, ali nema odgovora.")
-  
+    
+    class Stanje3(State):
+        async def run(self):
+
+            #saljem poruku glavnom agentu da sam gotov sa filtriranjem pribavljenih podataka
+            msg = spade.message.Message(
+                to= "username_main@jix.im",
+                body= "Gotov sam sa pribavljanjem podataka."
+            )
+            await self.send(msg)
+            #ovo je trenutak kada ja završavam sa svojim radom 
+
     async def setup(self):
 
         newsAg = self.MojePonasanje()
 
         newsAg.add_state(name="Stanje1", state=self.Stanje1())
         newsAg.add_state(name="Stanje2", state=self.Stanje2(), initial=True)
+        newsAg.add_state(name="Stanje3", state=self.Stanje3())
 
-        newsAg.add_transition(source="Stanje1", dest="Stanje2")
         newsAg.add_transition(source="Stanje2", dest="Stanje1")
         newsAg.add_transition(source="Stanje2", dest="Stanje2")
+        newsAg.add_transition(source="Stanje1", dest="Stanje3")
         
         self.add_behaviour(newsAg)
 #kraj NewsFilter agenta
