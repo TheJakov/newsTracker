@@ -666,7 +666,6 @@ class NormalizationAgent(Agent):
         normAg.add_state(name="Stanje3", state=self.Stanje3())
 
         normAg.add_transition(source="Stanje2", dest="Stanje1")
-        normAg.add_transition(source="Stanje2", dest="Stanje2")
         normAg.add_transition(source="Stanje1", dest="Stanje3")
         
         self.add_behaviour(normAg)
