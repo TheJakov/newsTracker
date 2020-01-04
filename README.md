@@ -1,6 +1,6 @@
 # newsTracker
 Višeagentni sustav za praćenje novosti
 
-### System architecture
+### Arhitektura višeagentnog sustava
 
 ![System architecture image](system_architecture.png?raw=true "System architecture")
