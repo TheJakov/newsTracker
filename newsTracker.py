@@ -40,7 +40,7 @@ class GlavniAgent(Agent):
         async def run(self):
             
             print(f"Glavni agent: Saljem dostupnim scraper agentima zahtjev za prikupljanje vijesti.\n")
-            primatelji = ["username@jix.im", "username2@jix.im", "username3@jix.im", "username4@jix.im", "username5@jix.im"]
+            primatelji = ["jakovk6@jix.im", "jakovk7@jix.im", "jakovk8@jix.im", "jakovk@jix.im", "jakovk2@jix.im"]
             for primatelj in primatelji:
                 msg = spade.message.Message(
                     to=primatelj,
@@ -68,6 +68,8 @@ class GlavniAgent(Agent):
                 print("\tNema vijesti povezanih sa tom ključnom riječi.")
             else:
                 brojac = 0
+                #provjeravanjej duplikata - za svaki slučaj
+                GlavniAgent.listaRezultata24Sata = list(dict.fromkeys(GlavniAgent.listaRezultata24Sata)) 
                 for vijest in GlavniAgent.listaRezultata24Sata:
                     brojac += 1
                     print(f"\t{brojac}) {vijest}")
@@ -77,6 +79,8 @@ class GlavniAgent(Agent):
                 print("\tNema vijesti povezanih sa tom ključnom riječi.")
             else:
                 brojac = 0
+                #provjeravanjej duplikata - za svaki slučaj
+                GlavniAgent.listaRezultataVecernji = list(dict.fromkeys(GlavniAgent.listaRezultataVecernji)) 
                 for vijest in GlavniAgent.listaRezultataVecernji:
                     brojac += 1
                     print(f"\t{brojac}) {vijest}")
@@ -86,6 +90,8 @@ class GlavniAgent(Agent):
                 print("\tNema vijesti povezanih sa tom ključnom riječi.")
             else:
                 brojac = 0
+                #provjeravanjej duplikata - za svaki slučaj
+                GlavniAgent.listaRezultataJutarnji = list(dict.fromkeys(GlavniAgent.listaRezultataJutarnji)) 
                 for vijest in GlavniAgent.listaRezultataJutarnji:
                     brojac += 1
                     print(f"\t{brojac}) {vijest}")
@@ -95,6 +101,8 @@ class GlavniAgent(Agent):
                 print("\tNema vijesti povezanih sa tom ključnom riječi.")
             else:
                 brojac = 0
+                #provjeravanjej duplikata - za svaki slučaj
+                GlavniAgent.listaRezultataSlobodnaDalmacija = list(dict.fromkeys(GlavniAgent.listaRezultataSlobodnaDalmacija)) 
                 for vijest in GlavniAgent.listaRezultataSlobodnaDalmacija:
                     brojac += 1
                     print(f"\t{brojac}) {vijest}")
@@ -104,6 +112,8 @@ class GlavniAgent(Agent):
                 print("\tNema vijesti povezanih sa tom ključnom riječi.")
             else:
                 brojac = 0
+                #provjeravanjej duplikata - za svaki slučaj
+                GlavniAgent.listaRezultataDnevnikHr = list(dict.fromkeys(GlavniAgent.listaRezultataDnevnikHr)) 
                 for vijest in GlavniAgent.listaRezultataDnevnikHr:
                     brojac += 1
                     print(f"\t{brojac}) {vijest}")
@@ -164,7 +174,7 @@ class Scraper24SataAgent(Agent):
 
             #saljem poruku filter agentu da sam gotov sa pribavljanjem svojih podataka
             msg = spade.message.Message(
-                to= "username_filter@jix.im",
+                to= "jakovk3@jix.im",
                 body= "Gotov sam."
             )
             await self.send(msg)
@@ -224,7 +234,7 @@ class ScraperVecernjiAgent(Agent):
 
             #saljem poruku filter agentu da sam gotov sa pribavljanjem svojih podataka
             msg = spade.message.Message(
-                to= "username_filter@jix.im",
+                to= "jakovk3@jix.im",
                 body= "Gotov sam."
             )
             await self.send(msg)
@@ -284,7 +294,7 @@ class ScraperJutarnjiAgent(Agent):
             
             #saljem poruku filter agentu da sam gotov sa pribavljanjem svojih podataka
             msg = spade.message.Message(
-                to= "username_filter@jix.im",
+                to= "jakovk3@jix.im",
                 body= "Gotov sam."
             )
             await self.send(msg)
@@ -344,7 +354,7 @@ class ScraperSlobodnaDalmacijaAgent(Agent):
 
             #saljem poruku filter agentu da sam gotov sa pribavljanjem svojih podataka
             msg = spade.message.Message(
-                to= "username_filter@jix.im",
+                to= "jakovk3@jix.im",
                 body= "Gotov sam."
             )
             await self.send(msg)
@@ -404,7 +414,7 @@ class ScraperDnevnikHrAgent(Agent):
 
             #saljem poruku filter agentu da sam gotov sa pribavljanjem svojih podataka
             msg = spade.message.Message(
-                to= "username_filter@jix.im",
+                to= "jakovk3@jix.im",
                 body= "Gotov sam."
             )
             await self.send(msg)
@@ -433,25 +443,21 @@ class NewsFilterAgent(Agent):
     listaNovostiSlobodnaDalmacija = []
     listaNovostiDnevnikHr = []
     BrojacZavrsenihScrapera = 0
+    normaliziranaListaKljucnihRijeci = []
 
     class MojePonasanje(FSMBehaviour):
         async def on_start(self):
             print("News Filter agent: Pokrećem se i čekam da svi scraperi završe sa dohvatom podataka.")
 
         async def on_end(self):
-            print("\nNews Filter agent: Filtrirao sam sve prikupljene novosti. Završavam sa radom.")
+            print("News Filter agent: Filtrirao sam sve prikupljene novosti. Završavam sa radom.")
             await self.agent.stop()
 
     class Stanje1(State):
         async def run(self):
 
-            print("\nNews Filter agent: Svi scraperi su mi javili da su prikupili i poslali podatke.") 
             #ovdje filtriram i saljem glavnom agentu rezultate za display
-            kljucnaRijec = input(" ----> Unesite ključnu riječ prema kojoj želite filtrirati novosti  ('sve vijesti' za prikaz svih): ")
-            print("News Filter agent: Započinjem pregled i filtiranje prikupljenih novosti.")
-            kljucnaRijec = kljucnaRijec.strip()
-
-            if(kljucnaRijec == "sve vijesti"):
+            if(NewsFilterAgent.normaliziranaListaKljucnihRijeci[0] == "sve vijesti"):
                 for zapis in NewsFilterAgent.listaNovosti24Sata:
                     GlavniAgent.listaRezultata24Sata.append(zapis)
 
@@ -467,26 +473,27 @@ class NewsFilterAgent(Agent):
                 for zapis in NewsFilterAgent.listaNovostiDnevnikHr:
                     GlavniAgent.listaRezultataDnevnikHr.append(zapis)
             else:
-                for zapis in NewsFilterAgent.listaNovosti24Sata:
-                    if(kljucnaRijec in zapis):
-                        GlavniAgent.listaRezultata24Sata.append(zapis)
+                for kljucnaRijec in NewsFilterAgent.normaliziranaListaKljucnihRijeci:
+                    for zapis in NewsFilterAgent.listaNovosti24Sata:
+                        if(kljucnaRijec in zapis):
+                            GlavniAgent.listaRezultata24Sata.append(zapis)
 
-                for zapis in NewsFilterAgent.listaNovostiVecernji:
-                    if(kljucnaRijec in zapis):
-                        GlavniAgent.listaRezultataVecernji.append(zapis)
+                    for zapis in NewsFilterAgent.listaNovostiVecernji:
+                        if(kljucnaRijec in zapis):
+                            GlavniAgent.listaRezultataVecernji.append(zapis)
 
-                for zapis in NewsFilterAgent.listaNovostiJutarnji:
-                    if(kljucnaRijec in zapis):
-                        GlavniAgent.listaRezultataJutarnji.append(zapis)
+                    for zapis in NewsFilterAgent.listaNovostiJutarnji:
+                        if(kljucnaRijec in zapis):
+                            GlavniAgent.listaRezultataJutarnji.append(zapis)
 
-                for zapis in NewsFilterAgent.listaNovostiSlobodnaDalmacija:
-                    if(kljucnaRijec in zapis):
-                        GlavniAgent.listaRezultataSlobodnaDalmacija.append(zapis)
-                
-                for zapis in NewsFilterAgent.listaNovostiDnevnikHr:
-                    if(kljucnaRijec in zapis):
-                        GlavniAgent.listaRezultataDnevnikHr.append(zapis)
-            self.set_next_state("Stanje3")   
+                    for zapis in NewsFilterAgent.listaNovostiSlobodnaDalmacija:
+                        if(kljucnaRijec in zapis):
+                            GlavniAgent.listaRezultataSlobodnaDalmacija.append(zapis)
+                    
+                    for zapis in NewsFilterAgent.listaNovostiDnevnikHr:
+                        if(kljucnaRijec in zapis):
+                            GlavniAgent.listaRezultataDnevnikHr.append(zapis)
+            self.set_next_state("Stanje5")   
             
     class Stanje2(State):
         async def run(self):
@@ -496,7 +503,8 @@ class NewsFilterAgent(Agent):
                 if msg.body != '':
                     NewsFilterAgent.BrojacZavrsenihScrapera += 1
                     if(NewsFilterAgent.BrojacZavrsenihScrapera == 5):
-                        self.set_next_state("Stanje1")
+                        print("\nNews Filter agent: Svi scraperi su mi javili da su prikupili i poslali podatke.") 
+                        self.set_next_state("Stanje3")
                     else:
                         self.set_next_state("Stanje2")
             else:
@@ -505,10 +513,33 @@ class NewsFilterAgent(Agent):
     class Stanje3(State):
         async def run(self):
 
+            #saljem poruku agentu za normalizaciju 
+            msg = spade.message.Message(
+                to= "jakovk5@jix.im",
+                body= "Pronađi mi ključne riječi."
+            )
+            await self.send(msg)
+            print("News Filter agent: Šaljem zahtjev agentu za normalizaciju da mi dobavi ključne riječi da mogu filtrirati podatke.") 
+            self.set_next_state("Stanje4")
+    
+    class Stanje4(State):
+        async def run(self):
+
+            msg = await self.receive(timeout=100)
+            if msg:
+                if msg.body != '':
+                    print("\nNewsFilter agent: Zaprimio sam normalizirane ključne riječi.")
+                    self.set_next_state("Stanje1")
+            else:
+                print("\tNewsFilter agent: Čekao sam, ali nema odgovora.")
+
+    class Stanje5(State):
+        async def run(self):
+
             #saljem poruku glavnom agentu da sam gotov sa filtriranjem pribavljenih podataka
             msg = spade.message.Message(
-                to= "username_main@jix.im",
-                body= "Gotov sam sa pribavljanjem podataka."
+                to= "jakovkglavni@jix.im",
+                body= "Gotov sam sa filtriranjem podataka."
             )
             await self.send(msg)
             #ovo je trenutak kada ja završavam sa svojim radom 
@@ -520,34 +551,150 @@ class NewsFilterAgent(Agent):
         newsAg.add_state(name="Stanje1", state=self.Stanje1())
         newsAg.add_state(name="Stanje2", state=self.Stanje2(), initial=True)
         newsAg.add_state(name="Stanje3", state=self.Stanje3())
+        newsAg.add_state(name="Stanje4", state=self.Stanje4())
+        newsAg.add_state(name="Stanje5", state=self.Stanje5())
 
-        newsAg.add_transition(source="Stanje2", dest="Stanje1")
         newsAg.add_transition(source="Stanje2", dest="Stanje2")
-        newsAg.add_transition(source="Stanje1", dest="Stanje3")
+        newsAg.add_transition(source="Stanje2", dest="Stanje3")
+        newsAg.add_transition(source="Stanje3", dest="Stanje4")
+        newsAg.add_transition(source="Stanje4", dest="Stanje1")
+        newsAg.add_transition(source="Stanje1", dest="Stanje5")
         
         self.add_behaviour(newsAg)
 #kraj NewsFilter agenta
 
+class NormalizationAgent(Agent):
+
+    stranicaUrl = "https://www.kontekst.io/hrvatski/"
+    fullStranicaUrl = "" # stranicaUrl + tu ide lowercase pojam
+
+
+    class MojePonasanje(FSMBehaviour):
+        async def on_start(self):
+            print("Normalization agent: Pokrećem se i stojim u stanju pripravnosti.")
+
+        async def on_end(self):
+            print("\nNormalization agent: Normalizirao sam ključnu riječ. Završavam sa radom.")
+            await self.agent.stop()
+
+    class Stanje1(State):
+        async def run(self):
+            
+            kljucnaRijec = input(" ---> Unesite ključnu riječ prema kojoj želite filtrirati novosti  ('sve vijesti' za prikaz svih): ")
+            print("Normalization agent: Započinjem normalizaciju.")
+            kljucnaRijec = kljucnaRijec.strip()
+
+            if(kljucnaRijec == "sve vijesti"):
+                NewsFilterAgent.normaliziranaListaKljucnihRijeci.append("sve vijesti")
+                self.set_next_state("Stanje3")
+            else:
+                #dodavanje originalne riječi
+                NewsFilterAgent.normaliziranaListaKljucnihRijeci.append(kljucnaRijec)
+                #dodavanje lowercase riječi
+                NewsFilterAgent.normaliziranaListaKljucnihRijeci.append(kljucnaRijec.lower())
+                #dodavanje uppercase riječi
+                NewsFilterAgent.normaliziranaListaKljucnihRijeci.append(kljucnaRijec.upper())
+
+                #dohvacanje sinonima
+                NormalizationAgent.fullStranicaUrl = NormalizationAgent.stranicaUrl + kljucnaRijec.lower()
+
+                page = requests.get(NormalizationAgent.fullStranicaUrl)
+            
+                soup = BeautifulSoup(page.content, 'html.parser')
+                sinonimi = soup.find_all("a", {"class": "dictentry"})
+                sinonimi = list(dict.fromkeys(sinonimi))
+
+                for sinonim in sinonimi:
+                    NewsFilterAgent.normaliziranaListaKljucnihRijeci.append(sinonim.text.strip())
+
+                #dodaju se i lowercase i uppercase verzije sinonima
+                lowerLista = []
+                upperLista = []
+                for rijec in NewsFilterAgent.normaliziranaListaKljucnihRijeci:
+                    lowerLista.append(rijec.lower())
+                    upperLista.append(rijec.upper())
+                
+                for lowZapis in lowerLista:
+                    NewsFilterAgent.normaliziranaListaKljucnihRijeci.append(lowZapis)
+
+                for upZapis in upperLista:
+                    NewsFilterAgent.normaliziranaListaKljucnihRijeci.append(upZapis)
+
+                #velika je šansa da ima duplikata, tako da ih izbacujemo
+                NewsFilterAgent.normaliziranaListaKljucnihRijeci = list(dict.fromkeys(NewsFilterAgent.normaliziranaListaKljucnihRijeci))
+
+                #izbacivanje prazih rezultata (nekad ta stranica ima neke skrivene prazne rezultate poput '{{ item.term}}')
+                for zapis in NewsFilterAgent.normaliziranaListaKljucnihRijeci:
+                    if "{" in zapis:
+                        NewsFilterAgent.normaliziranaListaKljucnihRijeci.remove(zapis)
+
+                print("\n[TEST INFO] Normalization agent: Ovo su pronađeni sinonimi.")
+                brojacv2 = 0
+                for rijec in NewsFilterAgent.normaliziranaListaKljucnihRijeci:
+                    brojacv2 += 1
+                    print(f"{brojacv2}) {rijec}")
+                self.set_next_state("Stanje3")   
+            
+    class Stanje2(State):
+        async def run(self):
+
+            msg = await self.receive(timeout=100)
+            if msg:
+                if msg.body != '':
+                    print("\nNormalization agent: Krećem sa radom.")
+                    self.set_next_state("Stanje1")
+            else:
+                print("\tNormalization agent: Čekao sam, ali nema odgovora.")
+    
+    class Stanje3(State):
+        async def run(self):
+
+            #saljem poruku filter agentu da sam gotov sa normalizacijom
+            msg = spade.message.Message(
+                to= "jakovk3@jix.im",
+                body= "Gotov sam sa normalizacijom."
+            )
+            await self.send(msg)
+            #ovo je trenutak kada ja završavam sa svojim radom 
+
+    async def setup(self):
+
+        normAg = self.MojePonasanje()
+
+        normAg.add_state(name="Stanje1", state=self.Stanje1())
+        normAg.add_state(name="Stanje2", state=self.Stanje2(), initial=True)
+        normAg.add_state(name="Stanje3", state=self.Stanje3())
+
+        normAg.add_transition(source="Stanje2", dest="Stanje1")
+        normAg.add_transition(source="Stanje2", dest="Stanje2")
+        normAg.add_transition(source="Stanje1", dest="Stanje3")
+        
+        self.add_behaviour(normAg)
+#kraj Normalization agenta
+
 if __name__ == '__main__':
 
-    scraperDnevnikHrAgent = ScraperDnevnikHrAgent("username@jix.im", "password")
+    scraperDnevnikHrAgent = ScraperDnevnikHrAgent("jakovk2@jix.im", "456789")
     scraperDnevnikHrAgent.start()
 
-    scraperSlobodnaDalmacijaAgent = ScraperSlobodnaDalmacijaAgent("username2@jix.im","password2")
+    scraperSlobodnaDalmacijaAgent = ScraperSlobodnaDalmacijaAgent("jakovk@jix.im","1234567")
     scraperSlobodnaDalmacijaAgent.start()
 
-    scraperJutarnjiAgent = ScraperJutarnjiAgent("username3@jix.im","password3")
+    scraperJutarnjiAgent = ScraperJutarnjiAgent("jakovk8@jix.im","891011")
     scraperJutarnjiAgent.start()
 
-    scraperVecernjiAgent = ScraperVecernjiAgent("username4@jix.im", "password4")
+    scraperVecernjiAgent = ScraperVecernjiAgent("jakovk7@jix.im", "78910")
     scraperVecernjiAgent.start()
 
-    scraper24Agent = Scraper24SataAgent("username5@jix.im", "password5")
+    scraper24Agent = Scraper24SataAgent("jakovk6@jix.im", "67890")
     scraper24Agent.start()
 
-    newsFilterAgent = NewsFilterAgent("username_filter@jix.im", "password6")
+    normalizationAgent = NormalizationAgent("jakovk5@jix.im", "45678")
+    normalizationAgent.start()
+
+    newsFilterAgent = NewsFilterAgent("jakovk3@jix.im", "234567")
     newsFilterAgent.start()
 
     time.sleep(1.5)
-    glavniAgent = GlavniAgent("username_main@jix.im", "password7")
+    glavniAgent = GlavniAgent("jakovkglavni@jix.im", "98765")
     glavniAgent.start()
