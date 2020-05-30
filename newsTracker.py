@@ -117,18 +117,46 @@ class GlavniAgent(Agent):
                 for vijest in GlavniAgent.listaRezultataDnevnikHr:
                     brojac += 1
                     print(f"\t{brojac}) {vijest}")
-            #ovo je trenutak kada ja završavam sa svojim radom 
+            #ovo je trenutak kada ja završavam sa svojim radom
+       
+    class CreationState(State):
+        async def run(self):
+            
+            scraperDnevnikHrAgent = ScraperDnevnikHrAgent("jakovk2@jix.im", "456789")
+            await scraperDnevnikHrAgent._async_start()
+
+            scraperSlobodnaDalmacijaAgent = ScraperSlobodnaDalmacijaAgent("jakovk@jix.im","1234567")
+            await scraperSlobodnaDalmacijaAgent._async_start()
+
+            scraperJutarnjiAgent = ScraperJutarnjiAgent("jakovk8@jix.im","891011")
+            await scraperJutarnjiAgent._async_start()
+
+            scraperVecernjiAgent = ScraperVecernjiAgent("jakovk7@jix.im", "78910")
+            await scraperVecernjiAgent._async_start()
+
+            scraper24Agent = Scraper24SataAgent("jakovk6@jix.im", "67890")
+            await scraper24Agent._async_start()
+
+            normalizationAgent = NormalizationAgent("jakovk5@jix.im", "45678")
+            await normalizationAgent._async_start()
+
+            newsFilterAgent = NewsFilterAgent("jakovk3@jix.im", "234567")
+            await newsFilterAgent._async_start()
+
+            self.set_next_state("Stanje1") 
 
     async def setup(self):
 
         glavniAg = self.MojePonasanje()
 
-        glavniAg.add_state(name="Stanje1", state=self.Stanje1(), initial=True)
+        glavniAg.add_state(name="Stanje1", state=self.Stanje1())
         glavniAg.add_state(name="Stanje2", state=self.Stanje2())
         glavniAg.add_state(name="Stanje3", state=self.Stanje3())
+        glavniAg.add_state(name="CreationState", state=self.CreationState(), initial=True)
 
         glavniAg.add_transition(source="Stanje1", dest="Stanje2")
         glavniAg.add_transition(source="Stanje2", dest="Stanje3")
+        glavniAg.add_transition(source="CreationState", dest="Stanje1")
         
         self.add_behaviour(glavniAg)
 #kraj glavnog agenta
@@ -623,7 +651,7 @@ class NormalizationAgent(Agent):
                 #velika je šansa da ima duplikata, tako da ih izbacujemo
                 NewsFilterAgent.normaliziranaListaKljucnihRijeci = list(dict.fromkeys(NewsFilterAgent.normaliziranaListaKljucnihRijeci))
 
-                #izbacivanje prazih rezultata (nekad ta stranica ima neke skrivene prazne rezultate poput '{{ item.term}}')
+                #izbacivanje prazih rezultata (nekad ta stranica ima neke skrivene prazne rezultate poput '{{ item.term }}')
                 for zapis in NewsFilterAgent.normaliziranaListaKljucnihRijeci:
                     if "{" in zapis:
                         NewsFilterAgent.normaliziranaListaKljucnihRijeci.remove(zapis)
@@ -672,28 +700,5 @@ class NormalizationAgent(Agent):
 #kraj Normalization agenta
 
 if __name__ == '__main__':
-
-    scraperDnevnikHrAgent = ScraperDnevnikHrAgent("jakovk2@jix.im", "456789")
-    scraperDnevnikHrAgent.start()
-
-    scraperSlobodnaDalmacijaAgent = ScraperSlobodnaDalmacijaAgent("jakovk@jix.im","1234567")
-    scraperSlobodnaDalmacijaAgent.start()
-
-    scraperJutarnjiAgent = ScraperJutarnjiAgent("jakovk8@jix.im","891011")
-    scraperJutarnjiAgent.start()
-
-    scraperVecernjiAgent = ScraperVecernjiAgent("jakovk7@jix.im", "78910")
-    scraperVecernjiAgent.start()
-
-    scraper24Agent = Scraper24SataAgent("jakovk6@jix.im", "67890")
-    scraper24Agent.start()
-
-    normalizationAgent = NormalizationAgent("jakovk5@jix.im", "45678")
-    normalizationAgent.start()
-
-    newsFilterAgent = NewsFilterAgent("jakovk3@jix.im", "234567")
-    newsFilterAgent.start()
-
-    time.sleep(1.5)
     glavniAgent = GlavniAgent("jakovkglavni@jix.im", "98765")
     glavniAgent.start()
