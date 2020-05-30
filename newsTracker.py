@@ -23,6 +23,10 @@ class GlavniAgent(Agent):
     listaRezultataSlobodnaDalmacija = []
     listaRezultataDnevnikHr = []
 
+    #testing
+    domain24sata = "https://www.24sata.hr"
+    listaRezultataObjekata24sata = []
+
     class MojePonasanje(FSMBehaviour):
         async def on_start(self):
             print("\nGlavni agent: Pokrećem se i započinjem dobavljanje današnjih novosti za Vas!")
@@ -117,6 +121,17 @@ class GlavniAgent(Agent):
                 for vijest in GlavniAgent.listaRezultataDnevnikHr:
                     brojac += 1
                     print(f"\t{brojac}) {vijest}")
+
+            print("\nPrikaz povezanih OBJEKATA vijesti sa stranice 24sata.hr :\n")
+            if(len(GlavniAgent.listaRezultataObjekata24sata) == 0):
+                print("\tNema vijesti povezanih sa tom ključnom riječi.")
+            else:
+                brojac = 0
+                #provjeravanjej duplikata - za svaki slučaj
+                #GlavniAgent.listaRezultataObjekata24sata = list(dict.fromkeys(GlavniAgent.listaRezultataDnevnikHr)) 
+                for vijest in GlavniAgent.listaRezultataObjekata24sata:
+                    brojac += 1
+                    print(f"\t{brojac}) {vijest[1]} - Link: {GlavniAgent.domain24sata}{vijest[0]}")
             #ovo je trenutak kada ja završavam sa svojim radom
        
     class CreationState(State):
@@ -178,12 +193,28 @@ class Scraper24SataAgent(Agent):
             page = requests.get(Scraper24SataAgent.stranicaUrl)
             
             soup = BeautifulSoup(page.content, 'html.parser')
+            fullStory = soup.find_all("a", {"class" : "card__link cf"})
             stories = soup.find_all("h3", {"class": "card__title"})
+
+            newsObjects = []
+
+            fullStory = list(dict.fromkeys(fullStory))
+
+            for fullS in fullStory:
+                link = fullS["href"]
+                title = fullS["title"]
+                newsObjects.append([link, title])
+
+
             stories = list(dict.fromkeys(stories))
 
             for story in stories:
                 tekst = story.find("span")
                 NewsFilterAgent.listaNovosti24Sata.append(tekst.text)
+
+            for objekt in newsObjects:
+                NewsFilterAgent.listaObjekata24Sata.append(objekt)
+
             self.set_next_state("Stanje3")   
             
     class Stanje2(State):
@@ -473,6 +504,9 @@ class NewsFilterAgent(Agent):
     BrojacZavrsenihScrapera = 0
     normaliziranaListaKljucnihRijeci = []
 
+    #testing
+    listaObjekata24Sata = []
+
     class MojePonasanje(FSMBehaviour):
         async def on_start(self):
             print("News Filter agent: Pokrećem se i čekam da svi scraperi završe sa dohvatom podataka.")
@@ -521,6 +555,11 @@ class NewsFilterAgent(Agent):
                     for zapis in NewsFilterAgent.listaNovostiDnevnikHr:
                         if(kljucnaRijec in zapis):
                             GlavniAgent.listaRezultataDnevnikHr.append(zapis)
+
+                    for objekt in NewsFilterAgent.listaObjekata24Sata:
+                        if(kljucnaRijec in objekt[1]):
+                            GlavniAgent.listaRezultataObjekata24sata.append(objekt)
+
             self.set_next_state("Stanje5")   
             
     class Stanje2(State):
